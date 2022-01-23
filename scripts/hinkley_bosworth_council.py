@@ -6,12 +6,12 @@ from bs4 import BeautifulSoup
 payload={}
 
 # Round ID is required
-round_id = 'REFUSEW1THU'
+round_id = ''
 
 req = Request(f'https://www.hinckley-bosworth.gov.uk/alldates?round={round_id}')
 req.add_header('User-Agent','Mozilla/5.0 (Windows NT 6.1; Win64; x64)')
 
-fp = urlopen(req).read()
+fp = urlopen(req).read() ##CHANGE BACK TO THIS
 page = fp.decode("utf8")
 
 soup = BeautifulSoup(page, features="html.parser")
@@ -23,6 +23,8 @@ for bins in soup.findAll("div", {"class" : 'monthlycaldates'}):
 
     binCollection = bins.find_all('div', { "class" : "first_date_bins"})
 
+    x = 0
+
     if binCollection:
       for bin in binCollection:
         
@@ -31,11 +33,19 @@ for bins in soup.findAll("div", {"class" : 'monthlycaldates'}):
         
         binTypes = bin.find_all('img', {"class": "collection"})
 
+        x = x+1
+
         if binTypes:
             for type in binTypes:
+                nextBin = 'false'
+
+                if x==1:
+                    nextBin = 'true'
+
                 dict_data = {
                     "CollectionDate": collectionDate,
-                    "BinType": type.get('title')
+                    "BinType": type.get('title'),
+                    "nextCollection": nextBin
                 }
 
                 data["bins"].append(dict_data)
